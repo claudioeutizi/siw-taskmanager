@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import it.uniroma3.siw.taskmanager.controller.session.SessionData;
 import it.uniroma3.siw.taskmanager.controller.validation.ProjectValidator;
+import it.uniroma3.siw.taskmanager.model.Credentials;
 import it.uniroma3.siw.taskmanager.model.Project;
 import it.uniroma3.siw.taskmanager.model.User;
 import it.uniroma3.siw.taskmanager.service.ProjectService;
@@ -51,14 +52,14 @@ public class ProjectController {
 	 * @return the name of the target view, that in this case is "project"
 	 */
 	
-	@RequestMapping(value = {"/projects"}, method = RequestMethod.GET)
-	public String sharedProjectsWithMe(Model model) {
-		User loggedUser = sessionData.getLoggedUser();
-		List<Project> sharedProjectsList = projectService.retrieveProjectsSharedWith(loggedUser);
-		model.addAttribute("loggedUser", loggedUser);
-		model.addAttribute("sharedProjectsList",sharedProjectsList);
-		return "sharedProjectsWithMe";
-	}
+//	@RequestMapping(value = {"/projects"}, method = RequestMethod.GET)
+//	public String sharedProjectsWithMe(Model model) {
+//		User loggedUser = sessionData.getLoggedUser();
+//		List<Project> sharedProjectsList = projectService.retrieveProjectsSharedWith(loggedUser);
+//		model.addAttribute("loggedUser", loggedUser);
+//		model.addAttribute("sharedProjectsList",sharedProjectsList);
+//		return "sharedProjectsWithMe";
+//	}
 	
 	/**
 	 * this method is called when a GET request is sent by the user to URL "/projects/{projectId} with parametric projectId
@@ -132,5 +133,27 @@ public class ProjectController {
 		this.projectService.deleteProject(projectId);
 		return "redirect:/projects"; //with this redirect the method myOwnedProjects will be recalled, 
 									 //in order to have the projectsList in the model
+	}
+	
+	@RequestMapping(value = { "/project/{projectId}/edit" }, method = RequestMethod.POST)
+	public String editProject(@Valid @ModelAttribute("projectForm") Project projectForm,
+							  @PathVariable Long projectId,
+							  BindingResult projectBindingResult,
+							  Model model) {
+		// validate edited fields
+		this.projectValidator.validate(projectForm, projectBindingResult);
+		Project project = projectService.getProject(projectId);
+		Credentials credentials = sessionData.getLoggedCredentials();
+			if (!projectBindingResult.hasErrors()) {
+				//you can edit projects only if you are the admin or the owner of the project
+				if (credentials.getRole().equals("ADMIN_ROLE") || project.getOwner().getId().equals(credentials.getUser().getId())) {
+					project.setName(projectForm.getName());
+					project.setDescription(projectForm.getDescription());
+					projectService.saveProject(project);
+				}
+				return "redirect:/projects/" + projectId;
+			}
+			model.addAttribute("credentials", credentials);
+		return "redirect:/projects/" + projectId;
 	}
 }

@@ -24,4 +24,5 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
 	 */
 	
 	public List<Project> findByOwner(User owner);
+	
 }

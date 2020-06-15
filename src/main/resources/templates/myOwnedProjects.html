@@ -8,7 +8,7 @@
 </head>
 <body>
 	<h1>My Projects</h1>
-	<div>
+	<div  th:if="${ownedProjectsList.size() > 0}">
 		<table>
 		<thead>
 			<tr> 
@@ -28,5 +28,7 @@
 		</tbody>
 		</table>
 	</div>
+	<div th:unless="${ownedProjectsList.size() > 0}">You don't own any Project!</div>
+	<h4><a href="/projects/add">Create New Project</a></h4>
 </body>
 </html>
