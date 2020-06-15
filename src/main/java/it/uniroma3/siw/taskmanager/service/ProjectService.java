@@ -72,4 +72,9 @@ public class ProjectService {
 	public List<Project> retrieveProjectsOwnedBy(User user) {
 		return projectRepository.findByOwner(user);
 	}
+	
+	@Transactional
+	public List<Project> retrieveProjectsSharedWith(User user){
+		return projectRepository.findByMembers(user);
+	}
 }

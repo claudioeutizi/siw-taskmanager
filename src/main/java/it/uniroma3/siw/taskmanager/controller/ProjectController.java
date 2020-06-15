@@ -38,10 +38,26 @@ public class ProjectController {
 	@RequestMapping(value = {"/projects"}, method = RequestMethod.GET)
 	public String myOwnedProjects(Model model) {
 		User loggedUser = sessionData.getLoggedUser();
-		List<Project> projectsList = projectService.retrieveProjectsOwnedBy(loggedUser);
+		List<Project> ownedProjectsList = projectService.retrieveProjectsOwnedBy(loggedUser);
 		model.addAttribute("loggedUser", loggedUser);
-		model.addAttribute("projectsList", projectsList);
+		model.addAttribute("ownedProjectsList", ownedProjectsList);
 		return "myOwnedProjects";
+	}
+	
+	/**
+	 * this method is called when a GET request is sent by the user to URL "/projects/{projectId} with parametric projectId
+	 * this method retrieve the view of the Project identified by projectId
+	 * @param model the Request model and the projectId of the Project
+	 * @return the name of the target view, that in this case is "project"
+	 */
+	
+	@RequestMapping(value = {"/projects"}, method = RequestMethod.GET)
+	public String sharedProjectsWithMe(Model model) {
+		User loggedUser = sessionData.getLoggedUser();
+		List<Project> sharedProjectsList = projectService.retrieveProjectsSharedWith(loggedUser);
+		model.addAttribute("loggedUser", loggedUser);
+		model.addAttribute("sharedProjectsList",sharedProjectsList);
+		return "sharedProjectsWithMe";
 	}
 	
 	/**
