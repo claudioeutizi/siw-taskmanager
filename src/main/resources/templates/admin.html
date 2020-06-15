@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang = "en"
+	  xlmns = "http://www.w3.org/1999/xhtml"
+	  xlmns:th="https://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>TaskManager</title>
+</head>
+<body>
+	<h1 th:text="'Welcome, Admin ' + ${loggedUser.firstName} + '!'"></h1>
+	<h4> <a href = "/admin/users">All Users List</a></h4>
+</body>
+</html>

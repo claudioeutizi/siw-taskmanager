@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en"
+		xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:th="https://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>TaskManager</title>
+</head>
+
+<body>
+	<h1>Your Profile</h1>
+	<table>
+		<tr><td>Username</td><td th:text="${credentials.userName}">...</td></tr>
+		<tr><td>First Name</td><td th:text="${loggedUser.firstName}">...</td></tr>
+		<tr><td>Last Name</td><td th:text="${loggedUser.lastName}">...</td></tr>
+		<tr><td>Role</td><td th:text="${credentials.role}">...</td><td th:if="${credentials.role.equals('ADMIN')}"><a href = "/admin">ADMIN PAGE</a></td></tr>
+		<tr><td>Registered at: </td><td th:text="${loggedUser.creationTimestamp}">...</td></tr>
+		<tr><td>Last Update at: </td><td th:text="${loggedUser.lastUpdateTimestamp}">...</td></tr>
+	</table>
+</body>
+</html>

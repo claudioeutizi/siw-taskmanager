@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang = "en"
+		xmlns = "http://www.w3.org/1999/xhtml"
+		xmlns:th = "https://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>TaskManager</title>
+</head>
+<body>
+	<h1>My Projects</h1>
+	<div>
+		<table>
+		<thead>
+			<tr> 
+				<th>Name</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each ="project : ${projectsList}">
+				<td><a th:href="'/projects/' + ${project.id}" th:text="${project.name}">...</a></td>
+				<td th:text="${project.description}">...</td>
+				<td><form method="POST" th:action="@{/projects/{projectId}/delete(projectId=${project.id})}">
+							<button type="submit" value="value">DELETE</button>
+				</form>
+				</td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
+</body>
+</html>
