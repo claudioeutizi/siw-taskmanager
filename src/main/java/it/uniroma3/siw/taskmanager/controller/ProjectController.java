@@ -51,14 +51,14 @@ public class ProjectController {
 	 * @return the name of the target view, that in this case is "project"
 	 */
 	
-	@RequestMapping(value = {"/projects"}, method = RequestMethod.GET)
-	public String sharedProjectsWithMe(Model model) {
-		User loggedUser = sessionData.getLoggedUser();
-		List<Project> sharedProjectsList = projectService.retrieveProjectsSharedWith(loggedUser);
-		model.addAttribute("loggedUser", loggedUser);
-		model.addAttribute("sharedProjectsList",sharedProjectsList);
-		return "sharedProjectsWithMe";
-	}
+//	@RequestMapping(value = {"/projects"}, method = RequestMethod.GET)
+//	public String sharedProjectsWithMe(Model model) {
+//		User loggedUser = sessionData.getLoggedUser();
+//		List<Project> sharedProjectsList = projectService.retrieveProjectsSharedWith(loggedUser);
+//		model.addAttribute("loggedUser", loggedUser);
+//		model.addAttribute("sharedProjectsList",sharedProjectsList);
+//		return "sharedProjectsWithMe";
+//	}
 	
 	/**
 	 * this method is called when a GET request is sent by the user to URL "/projects/{projectId} with parametric projectId
