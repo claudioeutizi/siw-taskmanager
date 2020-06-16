@@ -66,4 +66,9 @@ public class TaskService {
 	public void deleteTask(Task task) {
 		this.taskRepository.delete(task);
 	}
+	
+	@Transactional
+	public void deleteTask(Long id) {
+		this.taskRepository.deleteById(id);
+	}
 }

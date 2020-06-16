@@ -1,6 +1,8 @@
 package it.uniroma3.siw.taskmanager.model;
 
 import javax.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,9 +34,19 @@ public class Project {
     @Column
     private String description;
 
-    /**
-     * Name for this Project
+	/**
+     * Timestamp for the instant this Task was created/loaded into the DB
      */
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime creationTimestamp;
+
+    /**
+     * Timestamp for the last update of this Task into the DB
+     */
+    @Column(nullable = false)
+    private LocalDateTime lastUpdateTimestamp;
+    
+    
     @ManyToOne(fetch = FetchType.EAGER)
     private User owner;
 
@@ -120,8 +132,61 @@ public class Project {
     	if(!this.tasks.contains(task))
     		this.tasks.add(task);
     }
+    
+    public LocalDateTime getCreationTimestamp() {
+		return creationTimestamp;
+	}
+
+	public void setCreationTimestamp(LocalDateTime creationTimestamp) {
+		this.creationTimestamp = creationTimestamp;
+	}
+
+	public LocalDateTime getLastUpdateTimestamp() {
+		return lastUpdateTimestamp;
+	}
+
+	public void setLastUpdateTimestamp(LocalDateTime lastUpdateTimestamp) {
+		this.lastUpdateTimestamp = lastUpdateTimestamp;
+	}
 
     @Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Project other = (Project) obj;
+		if (creationTimestamp == null) {
+			if (other.creationTimestamp != null)
+				return false;
+		} else if (!creationTimestamp.equals(other.creationTimestamp))
+			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (lastUpdateTimestamp == null) {
+			if (other.lastUpdateTimestamp != null)
+				return false;
+		} else if (!lastUpdateTimestamp.equals(other.lastUpdateTimestamp))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (owner == null) {
+			if (other.owner != null)
+				return false;
+		} else if (!owner.equals(other.owner))
+			return false;
+		return true;
+	}
+
+	@Override
     public String toString() {
 
         return "Project{" +
@@ -133,17 +198,18 @@ public class Project {
     }
 
     // this is a semplification
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Project project = (Project) o;
-        return Objects.equals(name, project.name);
-    }
+    
 
     @Override
-    public int hashCode() {
-        return Objects.hash(name);
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((creationTimestamp == null) ? 0 : creationTimestamp.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((lastUpdateTimestamp == null) ? 0 : lastUpdateTimestamp.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		return result;
+	}
 }
 

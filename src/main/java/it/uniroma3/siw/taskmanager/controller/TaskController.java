@@ -1,5 +1,7 @@
 package it.uniroma3.siw.taskmanager.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,5 +72,38 @@ public class TaskController {
 		}
 		
 		return "redirect:/projects"+projectId.toString();
+	}
+	
+	@RequestMapping(value = {"/projects/{projectId}/tasks/{taskId}"}, method = RequestMethod.GET)
+	public String project(Model model , @PathVariable("projectId") Long projectId,
+										@PathVariable("taskId") Long taskId) {//the variable part of the URL 
+		
+		User loggedUser = sessionData.getLoggedUser();
+		//if no project with the passed ID exists
+		//redirect to the view with the list of my projects
+		Project project = projectService.getProject(projectId);
+		Task task = taskService.getTask(taskId);
+		if(task == null) return "redirect:/project/{projectId}";
+		
+		model.addAttribute("loggedUser", loggedUser);
+		model.addAttribute("project", project);
+		model.addAttribute("task", task);
+		
+		return "task";
+	}
+	
+	/**
+	 * This method is called when a POST request is sent by the user to url "/home/projects/{projectId}/delete
+	 * This method deletes the user whose credentials are identified by the passed id {projectId}
+	 * @param model the request model
+	 * @param projectId the id of the Project to delete
+	 * @return the target view, which in this case is "/projects/{projectId}"
+	 */
+	@RequestMapping(value = {"/projects/{projectId}/tasks/{taskId}/delete("}, method=RequestMethod.POST)
+	public String removeProject(Model model, @PathVariable("projectId") Long projectId,
+												@PathVariable("taskId") Long taskId) {
+		this.taskService.deleteTask(taskId);
+		return "redirect:/projects/{projectId}"; //with this redirect the method myOwnedProjects will be recalled, 
+									 //in order to have the projectsList in the model
 	}
 }

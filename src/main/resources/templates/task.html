@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>TaskManager</title>
+</head>
+<body>
+	<h1 th:text="${task.name}"></h1>
+	<h4 th:text="${task.description}" style="color: gray"></h4>
+	<a th:href="@{'/projects/'+${project.id}">Project</a>
+</body>
+</html>
