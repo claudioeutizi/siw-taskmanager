@@ -26,7 +26,7 @@
 	</div>
 	<div th:unless="${project.tasks.size() > 0}">No Tasks available</div>
 	<div>
-		<p> <a th:href = "@{{project.id}/tasks/add}">Create new Task</a></p>
+		<p> <a th:href = "@{'/projects/'+${project.id}+'/tasks/add'}">Create new Task</a></p>
 	</div>
 </body>
 </html>

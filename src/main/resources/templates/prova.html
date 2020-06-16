@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="it"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Progetto Esame - Giugno 2020</title>
+</head>
+<body>
+  <h1> Stai aggiungendo un TASK al tuo progetto </h1>
+  <form id = "aggiuntaTask"
+      th:action="@{'/aggiuntaTask/' + ${progettoForm.id}}"
+      method="POST">
+      
+       <table>
+        <tr>
+            <td><label for="nomeTaskInput">Inserisci il nome del task: </label>
+            <td><input id=nomeTaskInput type="text" placeholder="NOME" required th:field = "${taskForm.nometask}"/></td>
+            <td th:if="${#fields.hasErrors('taskForm.nometask')}" th:errors="${taskForm.nometask}" th:style="'color:red'"></td>
+        </tr> 
+        <tr>
+            <td><label for="descrizioneTaskInput">Inserisci una descrizione per il task: </label>
+            <td><input id=descrizioneTaskInput type="text" placeholder="DESCRIZIONE" required th:field = "${taskForm.descrizione}"/></td>
+       <td th:if="${#fields.hasErrors('taskForm.descrizione')}" th:errors="${taskForm.descrizione}" th:style="'color:red'"></td>        
+        </tr>
+        
+         <tr>
+         <td><button type="submit"> Aggiungi </button></td>
+       </tr>
+    </table>
+    </form>
+ </body>
+</html>

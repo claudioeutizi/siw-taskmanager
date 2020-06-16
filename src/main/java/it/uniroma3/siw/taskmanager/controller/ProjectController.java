@@ -52,15 +52,6 @@ public class ProjectController {
 	 * @return the name of the target view, that in this case is "project"
 	 */
 	
-//	@RequestMapping(value = {"/projects"}, method = RequestMethod.GET)
-//	public String sharedProjectsWithMe(Model model) {
-//		User loggedUser = sessionData.getLoggedUser();
-//		List<Project> sharedProjectsList = projectService.retrieveProjectsSharedWith(loggedUser);
-//		model.addAttribute("loggedUser", loggedUser);
-//		model.addAttribute("sharedProjectsList",sharedProjectsList);
-//		return "sharedProjectsWithMe";
-//	}
-	
 	/**
 	 * this method is called when a GET request is sent by the user to URL "/projects/{projectId} with parametric projectId
 	 * this method retrieve the view of the Project identified by projectId
@@ -68,7 +59,7 @@ public class ProjectController {
 	 * @return the name of the target view, that in this case is "project"
 	 */
 	@RequestMapping(value = {"/projects/{projectId}"}, method = RequestMethod.GET)
-	public String project(Model model , @PathVariable Long projectId) {//the variable part of the URL 
+	public String project(Model model , @PathVariable("projectId") Long projectId) {//the variable part of the URL 
 		
 		User loggedUser = sessionData.getLoggedUser();
 		//if no project with the passed ID exists
@@ -129,7 +120,7 @@ public class ProjectController {
 	 * @return
 	 */
 	@RequestMapping(value = {"/projects/{projectId}/delete"}, method=RequestMethod.POST)
-	public String removeProject(Model model, @PathVariable Long projectId) {
+	public String removeProject(Model model, @PathVariable("projectId") Long projectId) {
 		this.projectService.deleteProject(projectId);
 		return "redirect:/projects"; //with this redirect the method myOwnedProjects will be recalled, 
 									 //in order to have the projectsList in the model
@@ -137,7 +128,7 @@ public class ProjectController {
 	
 	@RequestMapping(value = { "/project/{projectId}/edit" }, method = RequestMethod.POST)
 	public String editProject(@Valid @ModelAttribute("projectForm") Project projectForm,
-							  @PathVariable Long projectId,
+							  @PathVariable("projectId") Long projectId,
 							  BindingResult projectBindingResult,
 							  Model model) {
 		// validate edited fields

@@ -41,30 +41,34 @@ public class TaskController {
 	 * @return the name of the target view, that in this case is "addTask"
 	 */
 	@RequestMapping(value = {"/projects/{projectId}/tasks/add"}, method = RequestMethod.GET)
-	public String createTaskForm(Model model) {
+	public String createTaskForm(Model model, @PathVariable("projectId") Long projectId) {
 		User loggedUser = sessionData.getLoggedUser();
 		model.addAttribute("loggedUser", loggedUser);
+		model.addAttribute("project", projectService.getProject(projectId));
 		model.addAttribute("taskForm", new Task());
 		return "addTask";
 	}
 
 	@RequestMapping(value = {"/projects/{projectId}/tasks/add"}, method = RequestMethod.POST)
 	public String createTask(@Valid @ModelAttribute("taskForm") Task task,
-								@PathVariable Long projectId,
-								BindingResult taskBindingResult,
-								Model model) {
+			@PathVariable("projectId") Long projectId,
+			BindingResult taskBindingResult,
+			Model model) {
 		User loggedUser = sessionData.getLoggedUser();
+		Project project = this.projectService.getProject(projectId);
 		taskValidator.validate(task, taskBindingResult);
-		if(!taskBindingResult.hasErrors()) {
-			this.taskService.saveTask(task);
-			Project project = this.projectService.getProject(projectId);
-			project.addTask(task);
-			projectService.saveProject(project);
-			return "redirect:/projects/" + projectId;
+		if(project != null) {
+			if(!taskBindingResult.hasErrors()) {
+				this.taskService.saveTask(task);
+				project.addTask(task);
+				projectService.saveProject(project);
+				return "redirect:/projects/" + projectId.toString();
+			}
+			model.addAttribute("loggedUser", loggedUser);
+			model.addAttribute("project", project);
+			return "addTask";
 		}
-
-		model.addAttribute("loggedUser", loggedUser);
-		return "addTask";
-
+		
+		return "redirect:/projects"+projectId.toString();
 	}
 }
