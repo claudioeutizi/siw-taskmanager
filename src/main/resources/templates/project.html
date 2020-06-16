@@ -19,14 +19,20 @@
 	<div th:if="${project.tasks.size() > 0}">
 		<h3>Tasks</h3>
 		<ul>
-			<li th:each = "task : ${project.tasks}">
-			<div th:text="${task.name}"></div>
-			<div th:text="${task.description}" style ="..."></div>
+			<li th:each="task : ${project.tasks}">
+				<div th:text="${task.name}"></div>
+				<div th:text="'	'+${task.description}" style="color: gray"></div>
 		</ul>
 	</div>
 	<div th:unless="${project.tasks.size() > 0}">No Tasks available</div>
 	<div>
-		<p> <a th:href = "@{'/projects/'+${project.id}+'/tasks/add'}">Create new Task</a></p>
+		<p>
+			<a th:href="@{'/projects/'+${project.id}+'/tasks/add'}">Create
+				new Task</a>
+		</p>
+		<p>
+			<a href="/projects">My Projects</a>
+		</p>
 	</div>
 </body>
 </html>
