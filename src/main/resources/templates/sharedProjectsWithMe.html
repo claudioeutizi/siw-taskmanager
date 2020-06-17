@@ -9,7 +9,7 @@
 <body>
 	<h1>Shared Projects With Me</h1>
 	<div>
-		<table>
+		<table th:if="${sharedProjectsList.size() > 0}">
 		<thead>
 			<tr>
 				<th>Owner</th>
@@ -19,11 +19,12 @@
 		</thead>
 		<tbody>
 			<tr th:each ="project : ${sharedProjectsList}">
-				<td><a th:href="'/sharedProjects/' + ${project.id}" th:text="${project.name}">...</a></td>
+				<td><a th:href="'/projects/' + ${project.id}" th:text="${project.name}">...</a></td>
 				<td th:text="${project.description}">...</td>
 			</tr>
 		</tbody>
 		</table>
 	</div>
+	<div th:unless = "${sharedProjectsList.size()>0}"><h4>There is no project shared with you!</h4></div>
 </body>
 </html>

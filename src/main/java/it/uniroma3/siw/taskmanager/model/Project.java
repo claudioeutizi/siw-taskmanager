@@ -63,6 +63,17 @@ public class Project {
             cascade = CascadeType.ALL)   // if a Project is deleted, all its tasks must be deleted too
     @JoinColumn(name="project_id")
     private List<Task> tasks;
+    
+	@PrePersist
+	protected void onPersist() {
+		this.creationTimestamp = LocalDateTime.now();
+		this.lastUpdateTimestamp = LocalDateTime.now();
+	}
+	
+	@PreUpdate
+	protected void onUpdate() {
+		this.lastUpdateTimestamp = LocalDateTime.now();
+	}
 
     public Project() {
         this.members = new ArrayList<>();

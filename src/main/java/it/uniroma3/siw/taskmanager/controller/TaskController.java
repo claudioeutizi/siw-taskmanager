@@ -70,28 +70,29 @@ public class TaskController {
 			model.addAttribute("project", project);
 			return "addTask";
 		}
-		
-		return "redirect:/projects"+projectId.toString();
+
+		return "redirect:/projects/"+projectId.toString();
 	}
-	
-	@RequestMapping(value = {"/projects/{projectId}/tasks/{taskId}"}, method = RequestMethod.GET)
-	public String project(Model model , @PathVariable("projectId") Long projectId,
-										@PathVariable("taskId") Long taskId) {//the variable part of the URL 
-		
+
+	@RequestMapping(value = {"/{projectId}/tasks/{taskId}"}, method = RequestMethod.GET)
+	public String task(Model model , @PathVariable("projectId") Long projectId,
+			@PathVariable("taskId") Long taskId) {//the variable part of the URL 
+
 		User loggedUser = sessionData.getLoggedUser();
 		//if no project with the passed ID exists
 		//redirect to the view with the list of my projects
 		Project project = projectService.getProject(projectId);
 		Task task = taskService.getTask(taskId);
-		if(task == null) return "redirect:/project/{projectId}";
-		
+		if(project == null) return "redirect:/projects";
+		if(task == null) return "redirect:/projects/{projectId}";
+
 		model.addAttribute("loggedUser", loggedUser);
 		model.addAttribute("project", project);
 		model.addAttribute("task", task);
-		
+
 		return "task";
 	}
-	
+
 	/**
 	 * This method is called when a POST request is sent by the user to url "/home/projects/{projectId}/delete
 	 * This method deletes the user whose credentials are identified by the passed id {projectId}
@@ -99,11 +100,50 @@ public class TaskController {
 	 * @param projectId the id of the Project to delete
 	 * @return the target view, which in this case is "/projects/{projectId}"
 	 */
-	@RequestMapping(value = {"/projects/{projectId}/tasks/{taskId}/delete("}, method=RequestMethod.POST)
-	public String removeProject(Model model, @PathVariable("projectId") Long projectId,
-												@PathVariable("taskId") Long taskId) {
+	@RequestMapping(value = {"/{projectId}/tasks/{taskId}/delete"}, method=RequestMethod.POST)
+	public String removeTask(Model model, @PathVariable("projectId") Long projectId,
+			@PathVariable("taskId") Long taskId) {
 		this.taskService.deleteTask(taskId);
-		return "redirect:/projects/{projectId}"; //with this redirect the method myOwnedProjects will be recalled, 
-									 //in order to have the projectsList in the model
+		return "redirect:/projects/" + projectId.toString(); //with this redirect the method myOwnedProjects will be recalled, 
+		//in order to have the projectsList in the model
 	}
+
+	@RequestMapping(value = {"/projects/{projectId}/tasks/{taskId}/update"}, method = RequestMethod.GET)
+	public String updateTaskForm(Model model, 
+								@PathVariable("taskId") Long taskId,
+								@PathVariable("projectId") Long ProjectId) {
+		
+		User user = sessionData.getLoggedUser();
+		model.addAttribute("loggedUser", user);
+		model.addAttribute("project", this.projectService.getProject(ProjectId));
+		model.addAttribute("task", this.taskService.getTask(taskId));
+		model.addAttribute("updateTaskForm", new Task());
+		return "updateTask";
+	}
+
+
+	@RequestMapping(value = {"/projects/{projectId}/tasks/{taskId}/update"}, method = RequestMethod.POST)
+	public String updateTaskForm(Model model,
+			@Valid @ModelAttribute("updateTaskForm") Task taskForm,
+			BindingResult taskBindingResult,
+			@PathVariable("taskId") Long taskId,
+			@PathVariable("projectId") Long projectId) {
+
+		User loggedUser = sessionData.getLoggedUser();
+		Project project = projectService.getProject(projectId);
+		taskValidator.validate(taskForm, taskBindingResult);
+		if(taskForm != null) {
+			if(!taskBindingResult.hasErrors()) {
+				taskForm.setId(taskId);
+				this.taskService.saveTask(taskForm);
+				return "redirect:/projects/"+projectId.toString();
+			}
+			model.addAttribute("loggedUser", loggedUser);
+			model.addAttribute("project", project);
+			model.addAttribute("task", this.taskService.getTask(taskId));
+			return "updateTask";
+		}
+		return "redirect:/projects/"+projectId.toString();
+	}
+
 }

@@ -62,7 +62,7 @@ public class SessionData {
 	/**
 	 * Store the Credentials and User objects for the currently logged user in session
 	 */
-	private void update() {
+	public void update() {
 		Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		UserDetails loggedUserDetails = (UserDetails) obj;
 		

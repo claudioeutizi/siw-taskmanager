@@ -41,4 +41,16 @@ public class CredentialsValidator implements Validator {
 			errors.rejectValue("password", "size");
 	}
 
+	public void validateSharing(Credentials sharerCredentials, Credentials credentials2ShareWith, Errors errors) {
+		String userName = credentials2ShareWith.getUserName();
+		if(userName.trim().isBlank()) 
+			errors.rejectValue("userName", "required");
+		else if(userName.trim().length() < MIN_USERNAME_LENGTH || userName.trim().length() > MAX_USERNAME_LENGTH)
+			errors.rejectValue("userName", "size");
+		else if(credentialsService.getCredentials(userName) == null)
+			errors.rejectValue("userName", "notExists");
+		else if(credentialsService.getUserByUserName(userName).equals(sharerCredentials.getUser()))
+			errors.rejectValue("userName", "sameAsOwner");
+	}
+
 }

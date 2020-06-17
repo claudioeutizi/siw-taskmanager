@@ -22,8 +22,6 @@ public class ProjectService {
 	@Autowired
 	protected ProjectRepository projectRepository;
 
-
-
 	/**
 	 * retrieves a Project from the DB based on its id
 	 * @param id the id of the Project to retrieve from the db

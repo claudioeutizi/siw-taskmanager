@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang = "en"
+		xmlns = "http://www.w3.org/1999/xhtml"
+		xmlns:th = "https://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>TaskManager</title>
+</head>
+<body>
+	<h1>Update User</h1>
+	<form id="updateTaskForm"
+			th:action="@{/user/me/update}"
+			th:object="${updateUserForm}"
+			method = "POST">
+		<table>
+			<tr>
+				<td><label for = "firstNameInput">First Name</label>
+				<td><input id="firstNameInput" type = "text" placeholder = "FIRST NAME" required th:field="*{firstName}"/></td>
+				<td th:if="${#fields.hasErrors('firstName')}" th:errors="${firstName}" th:style="'color:red'"></td>
+			</tr>
+			<tr>
+				<td><label for = "lastNameInput">Last Name</label>
+				<td><input id="lastNameInput" type = "text" placeholder = "LAST NAME" required th:field="*{lastName}"/></td>
+				<td th:if="${#fields.hasErrors('lastName')}" th:errors="${lastName}" th:style="'color:red'"></td>
+			</tr>
+			<tr>
+				<td><button type = "submit">Update</button></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

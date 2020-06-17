@@ -64,7 +64,6 @@ class TaskmanagerApplicationTests {
 		User user1 = new User("Mario", "Rossi");
 		credentials1.setUser(user1); //thanks to Cascade.ALL
 		credentials1 = credentialsService.saveCredentials(credentials1);
-		assertEquals(credentials1.getId().longValue(), 1L);
 		assertEquals(credentials1.getUserName(), "mariorossi");
 		user1 = credentials1.getUser();
 		assertEquals(user1.getFirstName(), "Mario");

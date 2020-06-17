@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import it.uniroma3.siw.taskmanager.model.Credentials;
+import it.uniroma3.siw.taskmanager.model.User;
 import it.uniroma3.siw.taskmanager.repository.CredentialsRepository;
 
 @Service
@@ -62,6 +63,7 @@ public class CredentialsService {
 		return this.credentialsRepository.save(credentials);
 	}
 
+	@Transactional
 	public List<Credentials> getAllCredentials() {
 		List<Credentials> result = new ArrayList<>();
 		Iterable<Credentials> credentials = this.credentialsRepository.findAll();
@@ -70,7 +72,13 @@ public class CredentialsService {
 		return result;
 	}
 
+	@Transactional
 	public void deleteCredentials(String username) {
 		this.credentialsRepository.delete(this.getCredentials(username));
+	}
+	
+	@Transactional
+	public User getUserByUserName(String username) {
+		return this.getCredentials(username).getUser();
 	}
 }

@@ -8,6 +8,6 @@
 <body>
 	<h1 th:text="${task.name}"></h1>
 	<h4 th:text="${task.description}" style="color: gray"></h4>
-	<a th:href="@{'/projects/'+${project.id}">Project</a>
+	<a th:href="'/projects/'+${project.id}">Project</a>
 </body>
 </html>

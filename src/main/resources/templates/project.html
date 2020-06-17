@@ -11,14 +11,15 @@
 	<div th:if="${members.size() > 0}">
 		<h3>Shared with:</h3>
 		<ul>
-			<li th:each="member : ${members}">
+			<li th:each="member : ${members}"
+				th:if="${!(member.id.equals(loggedUser.id))}">
 				<div th:text="${member.firstName} + ' ' + ${member.lastName}"></div>
 			</li>
 		</ul>
 	</div>
 	<div th:if="${project.tasks.size() > 0}">
 		<h3>Tasks</h3>
-			<table class="table table-hover">
+		<table class="table table-hover">
 			<thead>
 				<tr>
 					<th>Task</th>
@@ -27,19 +28,29 @@
 			</thead>
 			<tbody>
 				<tr th:each="task: ${project.tasks}">
-					<td th:text="${task.name}"></td>
-					<td th:text="${task.description}" style="color:gray"></td>
+					<td><a th:href="'/'+${project.id}+'/tasks/' + ${task.id}"
+						th:text="${task.name}"></a></td>
+					<td th:text="${task.description}" style="color: gray"></td>
 					<td>
 						<form method="POST"
-							th:action="@{'/projects/'+${project.id}+'/tasks/'+${task.id}+'delete(id=${task.id})'}">
+							th:action="@{'/'+${project.id}+'/tasks/'+${task.id}+'/delete'}"
+							th:if="${project.getOwner().equals(loggedUser)}">
 							<button type="submit" value="value">DELETE</button>
+						</form>
+					</td>
+					<td>
+						<form method="GET"
+							th:action="@{'/projects/'+${project.id}+'/tasks/'+${task.id}+'/update'}"
+							th:if="${project.getOwner().equals(loggedUser)}">
+							<button type="submit" value="value">UPDATE</button>
 						</form>
 					</td>
 			</tbody>
 		</table>
-		</div>
+	</div>
 	<div th:unless="${project.tasks.size() > 0}">No Tasks available</div>
-	<div>
+	<div
+		th:if="${project.getOwner().equals(loggedUser) || loggedUser.getRole().equals('ADMIN')}">
 		<p>
 			<a th:href="@{'/projects/'+${project.id}+'/tasks/add'}">Create
 				new Task</a>
@@ -47,6 +58,24 @@
 		<p>
 			<a href="/projects">My Projects</a>
 		</p>
+	</div>
+	<div
+		th:if="${project.getOwner().equals(loggedUser) || loggedUser.getRole().equals('ADMIN')}">
+		<h4>Share this project with:</h4>
+		<form id="shareCredentialsForm" method="POST"
+			th:object="${shareCredentialsForm}"
+			th:action="@{'/projects/'+${project.id}+'/share'}">
+			<table>
+				<tr>
+					<td><label for="userName">UserName:</label></td>
+					<td><input id="userName" type="text" placeholder="USERNAME"
+						th:field="*{userName}"></td>
+					<td><button type="submit" value="value">SHARE</button></td>
+					<td th:if="${#fields.hasErrors('userName')}"
+						th:errors="*{userName}" th:style="'color:red'"></td>
+				</tr>
+			</table>
+		</form>
 	</div>
 </body>
 </html>
