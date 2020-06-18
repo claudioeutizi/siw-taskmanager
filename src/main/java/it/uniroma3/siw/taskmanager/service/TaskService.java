@@ -1,12 +1,15 @@
 package it.uniroma3.siw.taskmanager.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.uniroma3.siw.taskmanager.model.Project;
 import it.uniroma3.siw.taskmanager.model.Task;
+import it.uniroma3.siw.taskmanager.model.User;
 import it.uniroma3.siw.taskmanager.repository.TaskRepository;
 
 /**
@@ -68,7 +71,20 @@ public class TaskService {
 	}
 	
 	@Transactional
+	public List<Task> retrieveTasksAssignedTo(User user){
+		return this.taskRepository.findByAssignedUser(user);
+	}
+	
+	@Transactional
+	public Task assignTaskToUser(Task task, User user) {
+		task.setAssignedUser(user);
+		return this.taskRepository.save(task);
+	}
+	
+	@Transactional
 	public void deleteTask(Long id) {
 		this.taskRepository.deleteById(id);
 	}
+	
+	
 }

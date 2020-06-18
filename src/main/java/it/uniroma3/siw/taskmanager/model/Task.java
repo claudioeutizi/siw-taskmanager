@@ -50,6 +50,9 @@ public class Task {
     @Column(nullable = false)
     private LocalDateTime lastUpdateTimestamp;
 
+    @ManyToOne
+    private User assignedUser;
+    
     public Task() {}
 
     public Task(String name,
@@ -130,7 +133,16 @@ public class Task {
         this.lastUpdateTimestamp = lastUpdateTimestamp;
     }
 
-    @Override
+    
+    public User getAssignedUser() {
+		return assignedUser;
+	}
+
+	public void setAssignedUser(User assignedUser) {
+		this.assignedUser = assignedUser;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

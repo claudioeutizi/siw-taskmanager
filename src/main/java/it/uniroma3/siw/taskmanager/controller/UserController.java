@@ -111,6 +111,22 @@ public class UserController {
 										//in order to have the credentialsList in the model
 	}
 	
+	/**
+	 * This method is called when a POST request is sent by the user to url "/admin/users/{username}/setAdmin
+	 * This method sets the user whose credentials are identified by the passed username {username} as an ADMIN
+	 * @param model the request model
+	 * @param username the username of the Credentials to set as an ADMIN
+	 * @return
+	 */
+	@RequestMapping(value = {"admin/users/{username}/setAdmin"}, method=RequestMethod.POST)
+	public String setAdmin(Model model, @PathVariable("username") String username) {
+		Credentials newAdmin = this.credentialsService.getCredentials(username);
+		newAdmin.setRole("ADMIN");
+		model.addAttribute("newAdmin", newAdmin);
+		return "setAdminSuccessful"; //with this redirect the method usersList will be recalled, 
+										//in order to have the credentialsList in the model
+	}
+	
 	@RequestMapping(value = { "/user/me/update" }, method = RequestMethod.GET)
     public String showUpdateForm(Model model) {
     	User loggedUser = sessionData.getLoggedUser();

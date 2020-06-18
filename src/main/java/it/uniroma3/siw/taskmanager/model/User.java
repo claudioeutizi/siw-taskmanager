@@ -44,7 +44,9 @@ public class User {
 	@ManyToMany(mappedBy = "members")
 	private List<Project> visibleProjects;
 	
-	
+	@OneToMany(mappedBy = "assignedUser")
+	private List<Task> assignedTasks;
+
 	@PrePersist
 	protected void onPersist() {
 		this.creationTimestamp = LocalDateTime.now();
@@ -59,6 +61,7 @@ public class User {
 	public User() {
 		this.ownedProjects = new ArrayList<>();
 		this.visibleProjects = new ArrayList<>();
+		this.assignedTasks = new ArrayList<>();
 	}
 
 	
@@ -151,6 +154,14 @@ public class User {
 
 	public void setVisibleProjects(List<Project> visibleProjects) {
 		this.visibleProjects = visibleProjects;
+	}
+	
+	public List<Task> getAssignedTasks() {
+		return assignedTasks;
+	}
+
+	public void setAssignedTasks(List<Task> assignedTasks) {
+		this.assignedTasks = assignedTasks;
 	}
 	
 	 // EQUALS AND HASHCODE

@@ -1,34 +1,43 @@
 <!DOCTYPE html>
-<html lang = "en"
-		xmlns = "http://www.w3.org/1999/xhtml"
-		xmlns:th = "https://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>TaskManager</title>
 </head>
 <body>
 	<h1>My Projects</h1>
-	<div  th:if="${ownedProjectsList.size() > 0}">
+	<div th:if="${ownedProjectsList.size() > 0}">
 		<table>
-		<thead>
-			<tr> 
-				<th>Name</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each ="project : ${ownedProjectsList}">
-				<td><a th:href="@{'/projects/' + ${project.id}}" th:text="${project.name}">...</a></td>
-				<td th:text="${project.description}">...</td>
-				<td><form method="POST" th:action="@{/projects/{projectId}/delete(projectId=${project.id})}">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="project : ${ownedProjectsList}">
+					<td><a th:href="@{'/projects/' + ${project.id}}"
+						th:text="${project.name}">...</a></td>
+					<td th:text="${project.description}">...</td>
+					<td><form method="POST"
+							th:action="@{/projects/{projectId}/delete(projectId=${project.id})}">
 							<button type="submit" value="value">DELETE</button>
-				</form>
+						</form><td><form method="GET"
+							th:action="@{/projects/{projectId}/update(projectId=${project.id})}">
+							<button type="submit" value="value">UPDATE</button>
+
+						</form>
 				</td>
-			</tr>
+					
+			
+				</tr>
 		</tbody>
 		</table>
 	</div>
 	<div th:unless="${ownedProjectsList.size() > 0}">You don't own any Project!</div>
-	<h4><a href="/projects/add">Create New Project</a></h4>
+	<h4>
+		<a href="/projects/add">Create New Project</a>
+	</h4>
 </body>
 </html>

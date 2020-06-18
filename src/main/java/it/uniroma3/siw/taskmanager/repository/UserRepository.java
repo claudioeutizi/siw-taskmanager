@@ -14,4 +14,5 @@ public interface UserRepository extends CrudRepository<User, Long> {
 	 * @return the List of Users that have visibility over the passed Project
 	 */
 	public List<User> findByVisibleProjects(Project project);
+	
 }

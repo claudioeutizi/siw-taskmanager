@@ -8,7 +8,7 @@
 </head>
 
 <body>
-	<h1 th:text="${credentials.userName}"> Profile</h1>
+	<h1 th:text="${credentials.userName} + ' profile'"> Profile</h1>
 	<table>
 		<tr><td>Username</td><td th:text="${credentials.userName}">...</td></tr>
 		<tr><td>First Name</td><td th:text="${loggedUser.firstName}">...</td></tr>

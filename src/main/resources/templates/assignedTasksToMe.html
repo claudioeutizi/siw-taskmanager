@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang = "en"
+		xmlns = "http://www.w3.org/1999/xhtml"
+		xmlns:th = "https://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>TaskManager</title>
+</head>
+<body>
+	<h1>Assigned Tasks To Me</h1>
+	<div>
+		<table th:if="${assignedTasksList.size() > 0}">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each ="task : ${assignedTasksList}">
+				<td th:text="${task.name}">...</td>
+				<td th:text="${task.description}" style="color:grey">...</td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
+	<div th:unless = "${assignedTasksList.size()>0}"><h4>There is no tasks assigned to you!</h4></div>
+</body>
+</html>
