@@ -1,5 +1,6 @@
 package it.uniroma3.siw.taskmanager.controller;
 
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -13,11 +14,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+
 import it.uniroma3.siw.taskmanager.controller.session.SessionData;
+import it.uniroma3.siw.taskmanager.controller.validation.CredentialsValidator;
 import it.uniroma3.siw.taskmanager.controller.validation.TaskValidator;
+import it.uniroma3.siw.taskmanager.model.Credentials;
 import it.uniroma3.siw.taskmanager.model.Project;
 import it.uniroma3.siw.taskmanager.model.Task;
 import it.uniroma3.siw.taskmanager.model.User;
+import it.uniroma3.siw.taskmanager.service.CredentialsService;
 import it.uniroma3.siw.taskmanager.service.ProjectService;
 import it.uniroma3.siw.taskmanager.service.TaskService;
 
@@ -35,6 +40,12 @@ public class TaskController {
 
 	@Autowired
 	TaskValidator taskValidator;
+
+	@Autowired
+	CredentialsValidator credentialsValidator;
+
+	@Autowired
+	CredentialsService credentialsService;
 
 	/**
 	 * this method is called when a GET request is sent by the user to URL "/tasks/add
@@ -74,6 +85,22 @@ public class TaskController {
 		return "redirect:/projects/"+projectId.toString();
 	}
 
+	/**
+	 * this method is called when a GET request is sent by the user to URL "/assignedTasksToMe"
+	 * this method retrieve the view of the Tasks assigned to the loggedUser
+	 * @param model the Request model
+	 * @return the name of the target view, that in this case is "assignedTasksToMe"
+	 */
+
+	@RequestMapping(value = {"/assignedTasksToMe"}, method = RequestMethod.GET)
+	public String assignedTasksToMe(Model model) {
+		User loggedUser = sessionData.getLoggedUser();
+		List<Task> assignedTasksList = taskService.retrieveTasksAssignedTo(loggedUser);
+		model.addAttribute("loggedUser", loggedUser);
+		model.addAttribute("assignedTasksList", assignedTasksList);
+		return "assignedTasksToMe";
+	}
+
 	@RequestMapping(value = {"/{projectId}/tasks/{taskId}"}, method = RequestMethod.GET)
 	public String task(Model model , @PathVariable("projectId") Long projectId,
 			@PathVariable("taskId") Long taskId) {//the variable part of the URL 
@@ -89,6 +116,7 @@ public class TaskController {
 		model.addAttribute("loggedUser", loggedUser);
 		model.addAttribute("project", project);
 		model.addAttribute("task", task);
+		model.addAttribute("credentialsForm", new Credentials());
 
 		return "task";
 	}
@@ -110,21 +138,21 @@ public class TaskController {
 
 	@RequestMapping(value = {"/projects/{projectId}/tasks/{taskId}/update"}, method = RequestMethod.GET)
 	public String updateTaskForm(Model model, 
-								@PathVariable("taskId") Long taskId,
-								@PathVariable("projectId") Long ProjectId) {
-		
+			@PathVariable("taskId") Long taskId,
+			@PathVariable("projectId") Long ProjectId) {
+
 		User user = sessionData.getLoggedUser();
 		model.addAttribute("loggedUser", user);
 		model.addAttribute("project", this.projectService.getProject(ProjectId));
 		model.addAttribute("task", this.taskService.getTask(taskId));
-		model.addAttribute("updateTaskForm", new Task());
+		model.addAttribute("taskForm", new Task());
 		return "updateTask";
 	}
 
 
 	@RequestMapping(value = {"/projects/{projectId}/tasks/{taskId}/update"}, method = RequestMethod.POST)
-	public String updateTaskForm(Model model,
-			@Valid @ModelAttribute("updateTaskForm") Task taskForm,
+	public String updateTask(Model model,
+			@Valid @ModelAttribute("taskForm") Task taskForm,
 			BindingResult taskBindingResult,
 			@PathVariable("taskId") Long taskId,
 			@PathVariable("projectId") Long projectId) {
@@ -136,6 +164,7 @@ public class TaskController {
 			if(!taskBindingResult.hasErrors()) {
 				taskForm.setId(taskId);
 				this.taskService.saveTask(taskForm);
+				model.addAttribute("task", taskForm);
 				return "redirect:/projects/"+projectId.toString();
 			}
 			model.addAttribute("loggedUser", loggedUser);
@@ -146,4 +175,32 @@ public class TaskController {
 		return "redirect:/projects/"+projectId.toString();
 	}
 
+	@RequestMapping(value={ "/projects/{projectId}/tasks/{taskId}/assign" }, method = RequestMethod.POST) 
+	public String assignTask(@Valid @ModelAttribute("credentialsForm") Credentials assignCredentialsForm, 
+			BindingResult assignCredentialsFormBindingResult,
+			@PathVariable Long projectId, @PathVariable Long taskId, 
+			Model model) {
+		Credentials loggedCredentials = sessionData.getLoggedCredentials();
+		Project project = this.projectService.getProject(projectId);
+		Task task = this.taskService.getTask(taskId);
+
+		//Only project owner can assign a task to a project member
+		if(project.getOwner().equals(loggedCredentials.getUser())){
+			this.credentialsValidator.validateAssignment(assignCredentialsForm, project, assignCredentialsFormBindingResult);
+
+			if(!assignCredentialsFormBindingResult.hasErrors()) {
+				//retrieve the user by its username and set it into the Credentials form object
+				User user2Assign2Task = credentialsService.getUserByUserName(assignCredentialsForm.getUserName());
+				assignCredentialsForm.setUser(user2Assign2Task);
+				this.taskService.assignTaskToUser(task, user2Assign2Task);
+				return "redirect:/{projectId}/tasks/"+taskId.toString();
+			}
+		}
+		model.addAttribute("project", project);
+		model.addAttribute("task", task);
+		model.addAttribute("loggedCredentials", loggedCredentials);
+		model.addAttribute("shareCredentialsForm", assignCredentialsForm);
+		return "redirect:/{projectId}/tasks/"+taskId.toString();
+
+	}
 }

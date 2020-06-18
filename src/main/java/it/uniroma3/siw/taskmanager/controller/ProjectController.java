@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import it.uniroma3.siw.taskmanager.controller.session.SessionData;
 import it.uniroma3.siw.taskmanager.controller.validation.CredentialsValidator;
@@ -55,10 +54,10 @@ public class ProjectController {
 	}
 
 	/**
-	 * this method is called when a GET request is sent by the user to URL "/projects/{projectId} with parametric projectId
-	 * this method retrieve the view of the Project identified by projectId
-	 * @param model the Request model and the projectId of the Project
-	 * @return the name of the target view, that in this case is "project"
+	 * this method is called when a GET request is sent by the user to URL "/sharedProjectsWithMe"
+	 * this method retrieve the view of the Projects shared with the loggedUser
+	 * @param model the Request model
+	 * @return the name of the target view, that in this case is "sharedProjectWithMe"
 	 */
 
 	@RequestMapping(value = {"/sharedProjectsWithMe"}, method = RequestMethod.GET)
@@ -77,7 +76,7 @@ public class ProjectController {
 	 */
 	@RequestMapping(value = {"/projects/{projectId}"}, method = RequestMethod.GET)
 	public String project(Model model , @PathVariable("projectId") Long projectId) {//the variable part of the URL 
-
+		Credentials loggedCredentials = sessionData.getLoggedCredentials();
 		User loggedUser = sessionData.getLoggedUser();
 		//if no project with the passed ID exists
 		//redirect to the view with the list of my projects
@@ -91,10 +90,11 @@ public class ProjectController {
 		if(!project.getOwner().equals(loggedUser) && !members.contains(loggedUser))//loggedUser do not have access to the project
 			return "redirect:/projects";
 
+		model.addAttribute("loggedCredentials", loggedCredentials);
 		model.addAttribute("loggedUser", loggedUser);
 		model.addAttribute("project", project);
 		model.addAttribute("members", members);
-		model.addAttribute("shareCredentialsForm", new Credentials()); //for the sharing form
+		model.addAttribute("credentialsForm", new Credentials()); //for the sharing form
 
 		return "project";
 	}
@@ -144,30 +144,8 @@ public class ProjectController {
 		//in order to have the projectsList in the model
 	}
 
-	@RequestMapping(value = { "/projects/{projectId}/edit" }, method = RequestMethod.POST)
-	public String editProject(@Valid @ModelAttribute("projectForm") Project projectForm,
-			@PathVariable("projectId") Long projectId,
-			BindingResult projectBindingResult,
-			Model model) {
-		// validate edited fields
-		this.projectValidator.validate(projectForm, projectBindingResult);
-		Project project = projectService.getProject(projectId);
-		Credentials credentials = sessionData.getLoggedCredentials();
-		if (!projectBindingResult.hasErrors()) {
-			//you can edit projects only if you are the admin or the owner of the project
-			if (credentials.getRole().equals("ADMIN_ROLE") || project.getOwner().getId().equals(credentials.getUser().getId())) {
-				project.setName(projectForm.getName());
-				project.setDescription(projectForm.getDescription());
-				projectService.saveProject(project);
-			}
-			return "redirect:/projects/" + projectId;
-		}
-		model.addAttribute("credentials", credentials);
-		return "redirect:/projects/" + projectId;
-	}
-
 	@RequestMapping(value = {"projects/{projectId}/share"}, method = RequestMethod.POST)
-	public String shareProject(@Valid @ModelAttribute("shareCredentialsForm") Credentials shareCredentialsForm,
+	public String shareProject(@Valid @ModelAttribute("credentialsForm") Credentials shareCredentialsForm,
 			BindingResult shareCredentialsFormBindingResult,
 			@PathVariable("projectId") Long projectId,
 			Model model) {
@@ -178,12 +156,40 @@ public class ProjectController {
 			this.credentialsValidator.validateSharing(sharerCredentials, shareCredentialsForm, shareCredentialsFormBindingResult);
 			if(!shareCredentialsFormBindingResult.hasErrors()) {
 				User user2ShareWith = credentialsService.getUserByUserName(shareCredentialsForm.getUserName());
-					this.projectService.shareProjectWithUser(project, user2ShareWith);
-					return "redirect:/projects/"+projectId.toString();
+				this.projectService.shareProjectWithUser(project, user2ShareWith);
+				return "redirect:/projects/"+projectId.toString();
 			}
 		}
 		model.addAttribute("loggedCredentials", sharerCredentials);
 		model.addAttribute("shareCredentialsForm", shareCredentialsForm);
 		return "redirect:/projects/"+project.getId().toString();
+	}
+
+	@RequestMapping(value = {"/projects/{projectId}/update"}, method=RequestMethod.GET)
+	public String updateProjectForm(Model model, @PathVariable("projectId") Long projectId) {
+		User loggedUser = sessionData.getLoggedUser();
+		model.addAttribute("loggedUser", loggedUser);
+		model.addAttribute("projectForm", new Project());
+		model.addAttribute("project", this.projectService.getProject(projectId));
+		return "updateProject";
+	}
+
+
+	@RequestMapping(value = {"/projects/{projectId}/update"}, method = RequestMethod.POST)
+	public String updateProject(@Valid @ModelAttribute("projectForm") Project project,
+			BindingResult projectBindingResult,
+			Model model, @PathVariable("projectId") Long projectId) {
+		User loggedUser = sessionData.getLoggedUser();
+		projectValidator.validate(project, projectBindingResult);
+		if(!projectBindingResult.hasErrors()) {
+			project.setId(projectId);
+			project.setOwner(loggedUser);
+			this.projectService.saveProject(project);
+			return "redirect:/projects/"+project.getId().toString();
+		}
+		model.addAttribute("loggedUser", loggedUser);
+		model.addAttribute("project", project);
+		return "updateProject";
+
 	}
 }

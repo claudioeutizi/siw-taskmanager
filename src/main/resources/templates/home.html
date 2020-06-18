@@ -1,17 +1,31 @@
 <!DOCTYPE html>
-<html lang = "en"
-		xmlns = "http://www.w3.org/1999/xhtml"
-		xmlns:th = "https://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>TaskManager</title>
 </head>
 <body>
-	<h1 th:text="'Welcome, ' + ${loggedUser.firstName} + '!'"></h1>
-	<h4> <a href = "/projects">My Projects</a></h4>
-	<h4> <a href = "/sharedProjectsWithMe">Shared Projects With Me</a></h4>
-	<h4> <a href = "/projects/add">Create new Project</a></h4>
-	<h4> <a href = "/users/me">Profile</a></h4>
-	<h4> <a href = "/logout">Logout</a></h4>
+	<div>
+		<h1 th:text="'Welcome, ' + ${loggedUser.firstName} + '!'"></h1>
+		<h4>
+			<a href="/projects">My Projects</a>
+		</h4>
+		<h4>
+			<a href="/sharedProjectsWithMe">Shared Projects With Me</a>
+		</h4>
+		<h4>
+			<a href="/assignedTasksToMe">Assigned Tasks To Me</a>
+		</h4>
+		<h4>
+			<a href="/projects/add">Create new Project</a>
+		</h4>
+		<h4>
+			<a href="/users/me">Profile</a>
+		</h4>
+		<h4>
+			<a href="/logout">Logout</a>
+		</h4>
+	</div>
 </body>
 </html>

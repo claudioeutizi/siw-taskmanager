@@ -8,12 +8,16 @@
 </head>
 
 <body>
-	<h1 th:text="${credentials.userName}"> Profile</h1>
+	<h1 th:text="${credentials.userName} + ' profile'"> Profile</h1>
 	<table>
-		<tr><td>Username</td><td th:text="${credentials.userName}">...</td></tr>
-		<tr><td>First Name</td><td th:text="${loggedUser.firstName}">...</td></tr>
-		<tr><td>Last Name</td><td th:text="${loggedUser.lastName}">...</td></tr>
-		<tr><td>Role</td><td th:text="${credentials.role}">...</td><td th:if="${credentials.role.equals('ADMIN')}"><a href = "/admin">ADMIN PAGE</a></td></tr>
+		<tr><td>Username:</td><td th:text="${credentials.userName}">...</td></tr>
+		<tr><td>First Name:</td><td th:text="${loggedUser.firstName}">...</td></tr>
+		<tr><td>Last Name:</td><td th:text="${loggedUser.lastName}">...</td></tr>
+		<tr><td>Role:</td><td th:text="${credentials.role}">...</td>
+			<td>
+			<form th:if="${credentials.role.equals('ADMIN')}" method="GET" action="/admin">
+    			<button type="submit">ADMIN PAGE</button>
+		</form></td></tr>
 		<tr><td>Registered at: </td><td th:text="${loggedUser.creationTimestamp}">...</td></tr>
 		<tr><td>Last Update at: </td><td th:text="${loggedUser.lastUpdateTimestamp}">...</td></tr>
 		<tr><td>						

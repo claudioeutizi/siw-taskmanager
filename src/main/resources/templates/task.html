@@ -6,8 +6,63 @@
 <title>TaskManager</title>
 </head>
 <body>
-	<h1 th:text="${task.name}"></h1>
-	<h4 th:text="${task.description}" style="color: gray"></h4>
-	<a th:href="'/projects/'+${project.id}">Project</a>
+	<h1 th:text="'Task '+${task.name}+' Page'"></h1>
+	<table>
+		<tr>
+			<td><b>Task Name:</b></td>
+			<td th:text="${task.name}">...</td>
+		</tr>
+		<tr>
+			<td><b>Task Description:</b></td>
+			<td th:text="${task.description}" style="color: grey">...</td>
+		</tr>
+		<tr>
+			<td><b>Completed:</b></td>
+			<td th:if="${task.completed}" th:text="'COMPLETED'"
+				th:style="'color: green'">...</td>
+			<td th:unless="${task.completed}" th:text="'NOT COMPLETED'"
+				th:style="'color: red'">...</td>
+		</tr>
+		<tr>
+			<td><b>Created at:</b></td>
+			<td th:text="${task.creationTimestamp}">...</td>
+		</tr>
+		<tr>
+			<td><b>Last Update at:</b></td>
+			<td th:text="${task.lastUpdateTimestamp}">...</td>
+		</tr>
+		<tr>
+			<td>
+				<form method="POST"
+					th:action="@{'/'+${project.id}+'/tasks/'+${task.id}+'/delete'}"
+					th:if="${project.getOwner().equals(loggedUser)}">
+					<button type="submit" value="value">DELETE TASK</button>
+				</form>
+			</td>
+			<td>
+				<form method="GET"
+					th:action="@{'/projects/'+${project.id}+'/tasks/'+${task.id}+'/update'}"
+					th:if="${project.getOwner().equals(loggedUser)}">
+					<button type="submit" value="value">UPDATE TASK</button>
+				</form>
+		</tr>
+	</table>
+	<div th:if="${project.getOwner().equals(loggedUser)}">
+		<h4>Assign this task to/Modify your assignment:</h4>
+		<form id="assignCredentialsForm" method="POST"
+			th:action="@{'/projects/'+${project.id}+'/tasks/'+${task.id}+'/assign'}">
+			<table>
+				<tr>
+					<td><label for="userName">UserName:</label></td>
+					<td><input id="userName" type="text" placeholder="USERNAME"
+						th:field="${credentialsForm.userName}"></td>
+					<td><button type="submit" value="value">ASSIGN</button></td>
+					<td th:if="${#fields.hasErrors('credentialsForm.userName')}"
+						th:errors="*{credentialsForm.userName}" th:style="'color:red'"></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<a th:href="'/projects/'+${project.id}">This Task's Project</a>
 </body>
 </html>

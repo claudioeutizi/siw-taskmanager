@@ -22,19 +22,19 @@ import it.uniroma3.siw.taskmanager.service.UserService;
 
 @Controller
 public class UserController {
-	
+
 	@Autowired
 	SessionData sessionData;
-	
+
 	@Autowired
 	CredentialsService credentialsService;
-	
+
 	@Autowired
 	UserService userService;
-	
-	 @Autowired
-	 UserValidator userValidator;
-	 
+
+	@Autowired
+	UserValidator userValidator;
+
 	/**
 	 * this method is called when a GET request is sent by the user to URL "/home".
 	 * this method prepares and dispatches the User registration view
@@ -45,11 +45,12 @@ public class UserController {
 	public String home(Model model) {
 		User loggedUser = sessionData.getLoggedUser();
 		model.addAttribute("loggedUser", loggedUser);
+		model.addAttribute("loggedCredentials", sessionData.getLoggedCredentials());
 		return "home";
 	}
-	
-	
-	
+
+
+
 	/**
 	 * this method is called when a GET request is sent by the user to URL "/admin".
 	 * this method prepares and dispatches the admin view
@@ -62,8 +63,8 @@ public class UserController {
 		model.addAttribute("loggedUser", loggedUser);
 		return "admin";
 	}
-	
-	
+
+
 	/**
 	 * this method is called when a GET request is sent by the url "/users/me"
 	 * this method prepares and dispatches the user's information view
@@ -78,8 +79,8 @@ public class UserController {
 		model.addAttribute("credentials", credentials);
 		return "userProfile";
 	}
-	
-	
+
+
 	/**
 	 * This method is called when a GET request is sent by the user to URL "/admin/users".
 	 * This method prepares and dispatches the view eith the list of all users for admin usage.
@@ -95,8 +96,8 @@ public class UserController {
 		model.addAttribute("allCredentials", allCredentials);
 		return "allUsers";
 	}
-	
-	
+
+
 	/**
 	 * This method is called when a POST request is sent by the user to url "/admin/users/{username}/delete
 	 * This method deletes the user whose credentials are identified by the passed username {username}
@@ -108,46 +109,62 @@ public class UserController {
 	public String removeUser(Model model, @PathVariable String username) {
 		this.credentialsService.deleteCredentials(username);
 		return "redirect:/admin/users"; //with this redirect the method usersList will be recalled, 
-										//in order to have the credentialsList in the model
+		//in order to have the credentialsList in the model
 	}
-	
-	@RequestMapping(value = { "/user/me/update" }, method = RequestMethod.GET)
-    public String showUpdateForm(Model model) {
-    	User loggedUser = sessionData.getLoggedUser();
-    	Credentials loggedCredentials = sessionData.getLoggedCredentials();
-        model.addAttribute("updateUserForm", new User());
-        model.addAttribute("loggedUser",loggedUser);
-        model.addAttribute("credentials", loggedCredentials);
-        return "updateUser";
-    }
 
-    /**
-     * This method is called when a GET request is sent by the user to URL "/register".
-     * This method prepares and dispatches the User registration view.
-     *
-     * @param model the Request model
-     * @return the name of the target view, that in this case is "register"
-     */
-    
-    @RequestMapping(value = { "/user/me/update" }, method = RequestMethod.POST)
-    public String updateUser(@Valid @ModelAttribute("updateUserForm") User updateUserForm,
-    						BindingResult updateUserBindingResult,
-    						Model model) {
-    	User loggedUser = this.sessionData.getLoggedUser();
-    	Credentials loggedCredentials = this.sessionData.getLoggedCredentials();
-        this.userValidator.validate(updateUserForm, updateUserBindingResult);
-        if(!updateUserBindingResult.hasErrors()) {
-        	loggedUser.setFirstName(updateUserForm.getFirstName());
-        	loggedUser.setLastName(updateUserForm.getLastName());
-        	loggedUser = userService.saveUser(loggedUser);
-            model.addAttribute("loggedUser",loggedUser);
-            model.addAttribute("credentials", loggedCredentials);
-    		System.out.println(loggedCredentials.getUserName());
-        	this.sessionData.update();
-            return "userProfile";
-        }
-        
-        return "updateUser";
-    }
+	/**
+	 * This method is called when a POST request is sent by the user to url "/admin/users/{username}/setAdmin
+	 * This method sets the user whose credentials are identified by the passed username {username} as an ADMIN
+	 * @param model the request model
+	 * @param username the username of the Credentials to set as an ADMIN
+	 * @return
+	 */
+	@RequestMapping(value = {"admin/users/{username}/setAdmin"}, method=RequestMethod.POST)
+	public String setAdmin(Model model, @PathVariable("username") String username) {
+		Credentials newAdmin = this.credentialsService.getCredentials(username);
+		newAdmin.setRole("ADMIN");
+		model.addAttribute("newAdmin", newAdmin);
+		return "setAdminSuccessful"; //with this redirect the method usersList will be recalled, 
+		//in order to have the credentialsList in the model
+	}
+
+	@RequestMapping(value = { "/user/me/update" }, method = RequestMethod.GET)
+	public String showUpdateForm(Model model) {
+		User loggedUser = sessionData.getLoggedUser();
+		Credentials loggedCredentials = sessionData.getLoggedCredentials();
+		model.addAttribute("userForm", new User());
+		model.addAttribute("loggedUser",loggedUser);
+		model.addAttribute("credentials", loggedCredentials);
+		return "updateUser";
+	}
+
+	/**
+	 * This method is called when a GET request is sent by the user to URL "/register".
+	 * This method prepares and dispatches the User registration view.
+	 *
+	 * @param model the Request model
+	 * @return the name of the target view, that in this case is "register"
+	 */
+
+	@RequestMapping(value = { "/user/me/update" }, method = RequestMethod.POST)
+	public String updateUser(@Valid @ModelAttribute("userForm") User updateUserForm,
+			BindingResult updateUserBindingResult,
+			Model model) {
+		User loggedUser = this.sessionData.getLoggedUser();
+		Credentials loggedCredentials = this.sessionData.getLoggedCredentials();
+		this.userValidator.validate(updateUserForm, updateUserBindingResult);
+		if(!updateUserBindingResult.hasErrors()) {
+			loggedUser.setFirstName(updateUserForm.getFirstName());
+			loggedUser.setLastName(updateUserForm.getLastName());
+			loggedUser = userService.saveUser(loggedUser);
+			model.addAttribute("loggedUser",loggedUser);
+			model.addAttribute("credentials", loggedCredentials);
+			System.out.println(loggedCredentials.getUserName());
+			this.sessionData.update();
+			return "userProfile";
+		}
+
+		return "updateUser";
+	}
 
 }

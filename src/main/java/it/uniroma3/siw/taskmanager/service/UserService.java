@@ -75,11 +75,11 @@ public class UserService {
 	public List<User> getAllUsers(){
 		List<User> result = new ArrayList<>();
 		Iterable<User> iterable = this.userRepository.findAll(); //ci restituisce una lista di iterable ma noi vogliamo
-																// una lista di User
+		// una lista di User
 		for(User user : iterable) result.add(user);
 		return result;
 	}
-	
+
 
 
 	public List<User> getMembers(Project project) {

@@ -10,7 +10,7 @@ public class MainController {
 
 	public MainController() {
 	}
-	
+
 	/**
 	 * This method is called when a GET request is sent by the user to URL "/" or "/index".
 	 * This method prepares and dispatches the index view
@@ -19,5 +19,5 @@ public class MainController {
 	 */
 	@RequestMapping(value = { "/", "/index" }, method = RequestMethod.GET)
 	public String index(Model model) { return "/index"; }
-	
+
 }

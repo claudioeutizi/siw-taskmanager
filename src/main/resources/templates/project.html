@@ -6,8 +6,33 @@
 <title>TaskManager</title>
 </head>
 <body>
-	<h1 th:text="${project.name}"></h1>
-	<h4 th:text="${project.description}" style="color: gray"></h4>
+	<h1 th:text="'Project '+${project.name}+' Page'" align="center"></h1>
+	<table>
+		<tr>
+			<td><b>Project Name:</b></td>
+			<td th:text="${project.name}">...</td>
+		</tr>
+		<tr>
+			<td><b>Project Description:</b></td>
+			<td th:text="${project.description}" style = "color:grey">...</td>
+		</tr>
+		<tr>
+			<td><b>Created at:</b></td>
+			<td th:text="${project.creationTimestamp}">...</td>
+		</tr>
+		<tr>
+			<td><b>Last Update at:</b></td>
+			<td th:text="${project.lastUpdateTimestamp}">...</td>
+		</tr>
+		<tr>
+			<td>
+				<form method="GET"
+					th:action="@{/projects/{projectId}/update(projectId=${project.id})}">
+					<button type="submit" value="value">UPDATE PROJECT</button>
+				</form>
+			</td>
+		</tr>
+	</table>
 	<div th:if="${members.size() > 0}">
 		<h3>Shared with:</h3>
 		<ul>
@@ -35,22 +60,22 @@
 						<form method="POST"
 							th:action="@{'/'+${project.id}+'/tasks/'+${task.id}+'/delete'}"
 							th:if="${project.getOwner().equals(loggedUser)}">
-							<button type="submit" value="value">DELETE</button>
+							<button type="submit" value="value">DELETE TASK</button>
 						</form>
 					</td>
 					<td>
 						<form method="GET"
 							th:action="@{'/projects/'+${project.id}+'/tasks/'+${task.id}+'/update'}"
 							th:if="${project.getOwner().equals(loggedUser)}">
-							<button type="submit" value="value">UPDATE</button>
+							<button type="submit" value="value">UPDATE TASK</button>
 						</form>
 					</td>
 			</tbody>
 		</table>
 	</div>
-	<div th:unless="${project.tasks.size() > 0}">No Tasks available</div>
+	<div th:unless="${project.tasks.size() > 0}"><h4>No Tasks available</h4></div>
 	<div
-		th:if="${project.getOwner().equals(loggedUser) || loggedUser.getRole().equals('ADMIN')}">
+		th:if="${project.getOwner().equals(loggedUser) || loggedCredentials.getRole().equals('ADMIN')}">
 		<p>
 			<a th:href="@{'/projects/'+${project.id}+'/tasks/add'}">Create
 				new Task</a>
@@ -60,19 +85,18 @@
 		</p>
 	</div>
 	<div
-		th:if="${project.getOwner().equals(loggedUser) || loggedUser.getRole().equals('ADMIN')}">
+		th:if="${project.getOwner().equals(loggedUser) || loggedCredentials.getRole().equals('ADMIN')}">
 		<h4>Share this project with:</h4>
-		<form id="shareCredentialsForm" method="POST"
-			th:object="${shareCredentialsForm}"
+		<form id="credentialsForm" method="POST"
 			th:action="@{'/projects/'+${project.id}+'/share'}">
 			<table>
 				<tr>
 					<td><label for="userName">UserName:</label></td>
 					<td><input id="userName" type="text" placeholder="USERNAME"
-						th:field="*{userName}"></td>
+						th:field="${credentialsForm.userName}"></td>
 					<td><button type="submit" value="value">SHARE</button></td>
-					<td th:if="${#fields.hasErrors('userName')}"
-						th:errors="*{userName}" th:style="'color:red'"></td>
+					<td th:if="${#fields.hasErrors('credentialsForm.userName')}"
+						th:errors="*{credentialsForm.userName}" th:style="'color:red'"></td>
 				</tr>
 			</table>
 		</form>

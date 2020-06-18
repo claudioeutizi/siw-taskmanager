@@ -19,23 +19,23 @@ import it.uniroma3.siw.taskmanager.repository.CredentialsRepository;
  */
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS) //this object is going to be istantiated in each User's session
-																	//his scope is limited to the session
+//his scope is limited to the session
 public class SessionData {
-	
+
 	/**
 	 * Currently logged User
 	 */
 	private User user;
-	
+
 	/**
 	 * Credentials for the currently logged User
 	 */
 	private Credentials credentials;
-	
+
 	@Autowired
 	private  CredentialsRepository credentialsRepository;
-	
-	
+
+
 	/**
 	 * Retrieve from Session the credentials for the currently logged user
 	 * If they are not store in Session already, retrieve them from the SecurityContext and from the DB
@@ -46,7 +46,7 @@ public class SessionData {
 		if(this.credentials == null) this.update();
 		return this.credentials;
 	}
-	
+
 	/**
 	 * Retrieve from Session the user for the currently logged user
 	 * If they are not store in Session already, retrieve them from the SecurityContext and from the DB
@@ -57,15 +57,15 @@ public class SessionData {
 		if(this.user == null) this.update();
 		return this.user;
 	}
-	
-	
+
+
 	/**
 	 * Store the Credentials and User objects for the currently logged user in session
 	 */
 	public void update() {
 		Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		UserDetails loggedUserDetails = (UserDetails) obj;
-		
+
 		this.credentials = this.credentialsRepository.findByUserName(loggedUserDetails.getUsername()).get();
 		this.credentials.setPassword("[PROTECTED]");
 		this.user = this.credentials.getUser();

@@ -7,26 +7,29 @@
 <title>TaskManager</title>
 </head>
 <body>
-	<h1>Create new Project</h1>
+	<h1>Update my Project</h1>
 	<form id="projectForm"
-			th:action="@{/projects/add}"
+			th:action="@{'/projects/'+${project.id}+'/update'}"
 			th:object="${projectForm}"
 			method = "POST">
 		<table>
 			<tr>
 				<td><label for = "projectNameInput">Project Name</label></td>
-				<td><input id="projectNameInput" type = "text" placeholder = "NAME" required th:field="*{name}"/></td>
+				<td><input id="projectNameInput" type = "text" placeholder = "UPDATE NAME" required th:field="*{name}"/></td>
 				<td th:if="${#fields.hasErrors('name')}" th:errors="*{name}" th:style="'color:red'"></td>
-			</tr>
+			</tr>	
 			<tr>
-				<td><label for = "projectDescriptionInput">Description</label></td>
-				<td><input id="projectDescriptionInput" type = "text" placeholder = "DESCRIPTION" th:field="*{description}"/></td>
+				<td><label for = "projectDescriptionInput">Description</label>
+				<td><input id="projectDescriptionInput" type = "text" placeholder = "UPDATE DESCRIPTION" th:field="*{description}"/></td>
 				<td th:if="${#fields.hasErrors('description')}" th:errors="*{description}" th:style="'color:red'"></td>
 			</tr>
 			<tr>
-				<td><button type = "submit">Register</button></td>
+				<td><button type = "submit">UPDATE</button></td>
 			</tr>
 		</table>
 	</form>
+		<p>
+			<a href="/projects">My Projects</a>
+		</p>
 </body>
 </html>

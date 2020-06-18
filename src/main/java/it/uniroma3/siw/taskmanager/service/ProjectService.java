@@ -32,8 +32,8 @@ public class ProjectService {
 		Optional<Project> result = this.projectRepository.findById(id);
 		return result.orElse(null);
 	}
-	
-	
+
+
 	/**
 	 * this method saves a Project in the db
 	 * @param project the Project to save into the db
@@ -43,7 +43,7 @@ public class ProjectService {
 	public Project saveProject(Project project) {
 		return this.projectRepository.save(project);
 	}
-		
+
 	/**
 	 * this method delete a Project in the db
 	 * @param project the Project to save into the db
@@ -52,12 +52,12 @@ public class ProjectService {
 	public void deleteProject(Project project) {
 		this.projectRepository.delete(project);
 	}
-	
+
 	@Transactional
 	public void deleteProject(Long id) {
 		this.projectRepository.delete(this.getProject(id));
 	}	
-	
+
 	@Transactional
 	public Project shareProjectWithUser(Project project, User user) {
 		project.addMember(user);
@@ -68,7 +68,7 @@ public class ProjectService {
 	public List<Project> retrieveProjectsOwnedBy(User user) {
 		return projectRepository.findByOwner(user);
 	}
-	
+
 	@Transactional
 	public List<Project> retrieveProjectsSharedWith(User user){
 		return projectRepository.findByMembers(user);
