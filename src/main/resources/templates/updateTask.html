@@ -8,24 +8,24 @@
 </head>
 <body>
 	<h1>Update Task</h1>
-	<form id="updateTaskForm"
+	<form id="taskForm"
 			th:action="@{'/projects/'+${project.id}+'/tasks/'+${task.id}+'/update'}"
 			th:object="${taskForm}"
 			method = "POST">
 		<table>
 			<tr>
 				<td><label for = "taskNameInput">Task Name</label>
-				<td><input id="taskNameInput" type = "text" placeholder = "NAME" required th:field="*{name}"/></td>
+				<td><input id="taskNameInput" type = "text" th:value="${task.name}" placeholder = "NAME" required th:field="*{name}"/></td>
 				<td th:if="${#fields.hasErrors('name')}" th:errors="*{name}" th:style="'color:red'"></td>
 			</tr>
 			<tr>
 				<td><label for = "taskDescriptionInput">Description</label>
-				<td><input id="taskDescriptionInput" type = "text" placeholder = "DESCRIPTION" th:field="*{description}"/></td>
+				<td><input id="taskDescriptionInput" type = "text" th:value="${task.description}" placeholder = "DESCRIPTION" th:field="*{description}"/></td>
 				<td th:if="${#fields.hasErrors('description')}" th:errors="*{description}" th:style="'color:red'"></td>
 			</tr>
 			<tr>
 				<td><label for = "taskCompletedInput">Completed</label>
- 				<td><input id="taskCompletedInput" type = "checkbox" th:field="*{completed}"/></td>
+ 				<td><input id="taskCompletedInput" type="checkbox" th:field="*{completed}"/></td>
  			</tr> 
 			<tr>
 				<td><button type = "submit">Update</button></td>

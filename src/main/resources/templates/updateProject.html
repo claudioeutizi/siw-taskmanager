@@ -7,10 +7,10 @@
 <title>TaskManager</title>
 </head>
 <body>
-	<h1>Update my Projects</h1>
+	<h1>Update my Project</h1>
 	<form id="projectForm"
 			th:action="@{'/projects/'+${project.id}+'/update'}"
-			th:object="${updateProjectForm}"
+			th:object="${projectForm}"
 			method = "POST">
 		<table>
 			<tr>
@@ -20,7 +20,7 @@
 			</tr>	
 			<tr>
 				<td><label for = "projectDescriptionInput">Description</label>
-				<td><input id="projectDescriptionInput" type = "text" placeholder = "UPDATE DESCRIPTION" required th:field="*{description}"/></td>
+				<td><input id="projectDescriptionInput" type = "text" placeholder = "UPDATE DESCRIPTION" th:field="*{description}"/></td>
 				<td th:if="${#fields.hasErrors('description')}" th:errors="*{description}" th:style="'color:red'"></td>
 			</tr>
 			<tr>

@@ -8,7 +8,7 @@ import it.uniroma3.siw.taskmanager.model.Task;
 import it.uniroma3.siw.taskmanager.model.User;
 
 public interface TaskRepository extends CrudRepository<Task, Long> {
-	
+
 	public List<Task> findByAssignedUser(User assignedUser);
 
 }

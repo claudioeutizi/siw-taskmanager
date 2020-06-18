@@ -53,7 +53,7 @@ public class CredentialsValidator implements Validator {
 		else if(credentialsService.getUserByUserName(userName).equals(sharerCredentials.getUser()))
 			errors.rejectValue("userName", "sameAsOwner");
 	}
-	
+
 	public void validateAssignment(Credentials credentials2Assign2Task, Project project, Errors errors) {
 		String userName = credentials2Assign2Task.getUserName();
 		if(userName.trim().isBlank()) 

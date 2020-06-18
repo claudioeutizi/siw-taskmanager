@@ -87,16 +87,16 @@
 	<div
 		th:if="${project.getOwner().equals(loggedUser) || loggedCredentials.getRole().equals('ADMIN')}">
 		<h4>Share this project with:</h4>
-		<form id="shareCredentialsForm" method="POST"
+		<form id="credentialsForm" method="POST"
 			th:action="@{'/projects/'+${project.id}+'/share'}">
 			<table>
 				<tr>
 					<td><label for="userName">UserName:</label></td>
 					<td><input id="userName" type="text" placeholder="USERNAME"
-						th:field="${shareCredentialsForm.userName}"></td>
+						th:field="${credentialsForm.userName}"></td>
 					<td><button type="submit" value="value">SHARE</button></td>
-					<td th:if="${#fields.hasErrors('shareCredentialsForm.userName')}"
-						th:errors="*{shareCredentialsForm.userName}" th:style="'color:red'"></td>
+					<td th:if="${#fields.hasErrors('credentialsForm.userName')}"
+						th:errors="*{credentialsForm.userName}" th:style="'color:red'"></td>
 				</tr>
 			</table>
 		</form>

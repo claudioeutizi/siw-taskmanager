@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import it.uniroma3.siw.taskmanager.model.Credentials;
 
 public interface CredentialsRepository extends CrudRepository<Credentials, Long> {
-	
+
 	/**
 	 * Retrieve Credentials by its username
 	 * @param username the username of the Credentials to retrieve

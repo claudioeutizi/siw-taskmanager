@@ -84,7 +84,7 @@ public class TaskController {
 
 		return "redirect:/projects/"+projectId.toString();
 	}
-	
+
 	/**
 	 * this method is called when a GET request is sent by the user to URL "/assignedTasksToMe"
 	 * this method retrieve the view of the Tasks assigned to the loggedUser
@@ -116,7 +116,7 @@ public class TaskController {
 		model.addAttribute("loggedUser", loggedUser);
 		model.addAttribute("project", project);
 		model.addAttribute("task", task);
-		model.addAttribute("assignCredentialsForm", new Credentials());
+		model.addAttribute("credentialsForm", new Credentials());
 
 		return "task";
 	}
@@ -145,14 +145,14 @@ public class TaskController {
 		model.addAttribute("loggedUser", user);
 		model.addAttribute("project", this.projectService.getProject(ProjectId));
 		model.addAttribute("task", this.taskService.getTask(taskId));
-		model.addAttribute("updateTaskForm", new Task());
+		model.addAttribute("taskForm", new Task());
 		return "updateTask";
 	}
 
 
 	@RequestMapping(value = {"/projects/{projectId}/tasks/{taskId}/update"}, method = RequestMethod.POST)
-	public String updateTaskForm(Model model,
-			@Valid @ModelAttribute("updateTaskForm") Task taskForm,
+	public String updateTask(Model model,
+			@Valid @ModelAttribute("taskForm") Task taskForm,
 			BindingResult taskBindingResult,
 			@PathVariable("taskId") Long taskId,
 			@PathVariable("projectId") Long projectId) {
@@ -164,6 +164,7 @@ public class TaskController {
 			if(!taskBindingResult.hasErrors()) {
 				taskForm.setId(taskId);
 				this.taskService.saveTask(taskForm);
+				model.addAttribute("task", taskForm);
 				return "redirect:/projects/"+projectId.toString();
 			}
 			model.addAttribute("loggedUser", loggedUser);
@@ -175,23 +176,22 @@ public class TaskController {
 	}
 
 	@RequestMapping(value={ "/projects/{projectId}/tasks/{taskId}/assign" }, method = RequestMethod.POST) 
-	public String assignTask(@Valid @ModelAttribute("assignCredentialsForm") Credentials assignCredentialsForm, 
+	public String assignTask(@Valid @ModelAttribute("credentialsForm") Credentials assignCredentialsForm, 
 			BindingResult assignCredentialsFormBindingResult,
 			@PathVariable Long projectId, @PathVariable Long taskId, 
 			Model model) {
 		Credentials loggedCredentials = sessionData.getLoggedCredentials();
 		Project project = this.projectService.getProject(projectId);
 		Task task = this.taskService.getTask(taskId);
-		
-		//retrieve the user by its username and set it into the Credentials form object
-		User user2Assign2Task = credentialsService.getUserByUserName(assignCredentialsForm.getUserName());
-		assignCredentialsForm.setUser(user2Assign2Task);
-		
+
 		//Only project owner can assign a task to a project member
 		if(project.getOwner().equals(loggedCredentials.getUser())){
 			this.credentialsValidator.validateAssignment(assignCredentialsForm, project, assignCredentialsFormBindingResult);
-			
+
 			if(!assignCredentialsFormBindingResult.hasErrors()) {
+				//retrieve the user by its username and set it into the Credentials form object
+				User user2Assign2Task = credentialsService.getUserByUserName(assignCredentialsForm.getUserName());
+				assignCredentialsForm.setUser(user2Assign2Task);
 				this.taskService.assignTaskToUser(task, user2Assign2Task);
 				return "redirect:/{projectId}/tasks/"+taskId.toString();
 			}

@@ -94,7 +94,7 @@ public class ProjectController {
 		model.addAttribute("loggedUser", loggedUser);
 		model.addAttribute("project", project);
 		model.addAttribute("members", members);
-		model.addAttribute("shareCredentialsForm", new Credentials()); //for the sharing form
+		model.addAttribute("credentialsForm", new Credentials()); //for the sharing form
 
 		return "project";
 	}
@@ -145,7 +145,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = {"projects/{projectId}/share"}, method = RequestMethod.POST)
-	public String shareProject(@Valid @ModelAttribute("shareCredentialsForm") Credentials shareCredentialsForm,
+	public String shareProject(@Valid @ModelAttribute("credentialsForm") Credentials shareCredentialsForm,
 			BindingResult shareCredentialsFormBindingResult,
 			@PathVariable("projectId") Long projectId,
 			Model model) {
@@ -156,29 +156,29 @@ public class ProjectController {
 			this.credentialsValidator.validateSharing(sharerCredentials, shareCredentialsForm, shareCredentialsFormBindingResult);
 			if(!shareCredentialsFormBindingResult.hasErrors()) {
 				User user2ShareWith = credentialsService.getUserByUserName(shareCredentialsForm.getUserName());
-					this.projectService.shareProjectWithUser(project, user2ShareWith);
-					return "redirect:/projects/"+projectId.toString();
+				this.projectService.shareProjectWithUser(project, user2ShareWith);
+				return "redirect:/projects/"+projectId.toString();
 			}
 		}
 		model.addAttribute("loggedCredentials", sharerCredentials);
 		model.addAttribute("shareCredentialsForm", shareCredentialsForm);
 		return "redirect:/projects/"+project.getId().toString();
 	}
-	
+
 	@RequestMapping(value = {"/projects/{projectId}/update"}, method=RequestMethod.GET)
 	public String updateProjectForm(Model model, @PathVariable("projectId") Long projectId) {
 		User loggedUser = sessionData.getLoggedUser();
 		model.addAttribute("loggedUser", loggedUser);
-		model.addAttribute("updateProjectForm", new Project());
+		model.addAttribute("projectForm", new Project());
 		model.addAttribute("project", this.projectService.getProject(projectId));
 		return "updateProject";
 	}
-	
-	
+
+
 	@RequestMapping(value = {"/projects/{projectId}/update"}, method = RequestMethod.POST)
-	public String updateProject(@Valid @ModelAttribute("updateProjectForm") Project project,
-								BindingResult projectBindingResult,
-								Model model, @PathVariable("projectId") Long projectId) {
+	public String updateProject(@Valid @ModelAttribute("projectForm") Project project,
+			BindingResult projectBindingResult,
+			Model model, @PathVariable("projectId") Long projectId) {
 		User loggedUser = sessionData.getLoggedUser();
 		projectValidator.validate(project, projectBindingResult);
 		if(!projectBindingResult.hasErrors()) {
@@ -188,7 +188,8 @@ public class ProjectController {
 			return "redirect:/projects/"+project.getId().toString();
 		}
 		model.addAttribute("loggedUser", loggedUser);
-		return "redirect:/projects/" + project.getId().toString();
-		
+		model.addAttribute("project", project);
+		return "updateProject";
+
 	}
 }

@@ -17,11 +17,11 @@ import it.uniroma3.siw.taskmanager.repository.CredentialsRepository;
 
 @Service
 public class CredentialsService {
-	
-	
+
+
 	@Autowired
 	protected CredentialsRepository credentialsRepository;
-	
+
 	@Autowired
 	protected PasswordEncoder passwordEncoder;
 	/**
@@ -34,7 +34,7 @@ public class CredentialsService {
 		Optional<Credentials> result = this.credentialsRepository.findById(id);
 		return result.orElse(null);
 	}
-	
+
 	/**
 	 * this method retrieves a Credentials from the DB based on its id
 	 * @param username the username of the Credentials to retrieve from the DB
@@ -45,7 +45,7 @@ public class CredentialsService {
 		Optional<Credentials> result = this.credentialsRepository.findByUserName(username);
 		return result.orElse(null);
 	}
-	
+
 	/**
 	 * This method saves a Credentials in the DB
 	 * Before saving it, it sets the Credentials role to DEFAULT, and encrypts the password
@@ -76,7 +76,7 @@ public class CredentialsService {
 	public void deleteCredentials(String username) {
 		this.credentialsRepository.delete(this.getCredentials(username));
 	}
-	
+
 	@Transactional
 	public User getUserByUserName(String username) {
 		return this.getCredentials(username).getUser();
