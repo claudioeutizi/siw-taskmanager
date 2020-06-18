@@ -8,7 +8,7 @@
 </head>
 <body>
 	<h1>Update my Projects</h1>
-	<form id="updateProjectForm"
+	<form id="projectForm"
 			th:action="@{'/projects/'+${project.id}+'/update'}"
 			th:object="${updateProjectForm}"
 			method = "POST">

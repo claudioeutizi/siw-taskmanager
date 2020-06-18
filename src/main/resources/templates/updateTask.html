@@ -10,7 +10,7 @@
 	<h1>Update Task</h1>
 	<form id="updateTaskForm"
 			th:action="@{'/projects/'+${project.id}+'/tasks/'+${task.id}+'/update'}"
-			th:object="${updateTaskForm}"
+			th:object="${taskForm}"
 			method = "POST">
 		<table>
 			<tr>
@@ -23,10 +23,10 @@
 				<td><input id="taskDescriptionInput" type = "text" placeholder = "DESCRIPTION" th:field="*{description}"/></td>
 				<td th:if="${#fields.hasErrors('description')}" th:errors="*{description}" th:style="'color:red'"></td>
 			</tr>
-<!-- 			<tr> -->
-<!-- 				<td><label for = "taskCompletedInput">Completed</label> -->
-<!-- 				<td><input id="taskCompletedInput" type = "checkbox" th:field="*{completed}"/></td> -->
-<!-- 			</tr> -->
+			<tr>
+				<td><label for = "taskCompletedInput">Completed</label>
+ 				<td><input id="taskCompletedInput" type = "checkbox" th:field="*{completed}"/></td>
+ 			</tr> 
 			<tr>
 				<td><button type = "submit">Update</button></td>
 			</tr>
