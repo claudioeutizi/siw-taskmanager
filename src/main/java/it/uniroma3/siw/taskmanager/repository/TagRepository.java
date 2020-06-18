@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import it.uniroma3.siw.taskmanager.model.Tag;
 import it.uniroma3.siw.taskmanager.model.Task;
 
-public interface TagRepository extends CrudRepository<Tag, Long>, JpaRepository<Tag, Long> {
+public interface TagRepository extends CrudRepository<Tag, Long> {
 
 	/***
 	 * 
@@ -29,7 +29,7 @@ public interface TagRepository extends CrudRepository<Tag, Long>, JpaRepository<
 	 * @param task
 	 * @return List di Tag
 	 */
-	public List<Tag> findByTasks(Task task);
+	public List<Tag> findByTask(Task task);
 	
 	
 }

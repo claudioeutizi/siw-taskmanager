@@ -49,7 +49,6 @@ public class User {
 	private List<Task> assignedTasks;
 	
 	@OneToMany(mappedBy = "writer")
-	@JoinColumn(name = "user_id")
 	private List<Comment> writtenComments; 
 
 	@PrePersist

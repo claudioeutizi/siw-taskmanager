@@ -37,6 +37,6 @@ public class TagValidator implements Validator{
             errors.rejectValue("description", "required");
         else if(description.length()< MIN_DESC_LENGTH || description.length()>MAX_DESC_LENGTH){
             errors.rejectValue("description", "size");
-        }   
+        } 
     }
 }

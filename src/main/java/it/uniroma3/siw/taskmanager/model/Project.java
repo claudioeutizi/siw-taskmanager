@@ -55,6 +55,10 @@ public class Project {
 	 */
 	@ManyToMany(fetch = FetchType.LAZY)                                // fetch is LAZY by default
 	private List<User> members;
+	
+	@OneToMany
+	@JoinColumn(name = "project_id")
+	private List<Tag> tags;
 
 	/**
 	 * Tasks that this project contains
@@ -78,6 +82,7 @@ public class Project {
 	public Project() {
 		this.members = new ArrayList<>();
 		this.tasks = new ArrayList<>();
+		this.tags = new ArrayList<>();
 	}
 
 	public Project(String name, String description) {
@@ -160,6 +165,18 @@ public class Project {
 		this.lastUpdateTimestamp = lastUpdateTimestamp;
 	}
 
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+	
+	public void addTag(Tag tag) {
+		this.tags.add(tag);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -207,10 +224,6 @@ public class Project {
 				", tasks=" + tasks +
 				'}';
 	}
-
-	// this is a semplification
-
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

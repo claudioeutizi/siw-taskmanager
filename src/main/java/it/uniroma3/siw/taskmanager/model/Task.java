@@ -172,6 +172,10 @@ public class Task {
 	public void setTags(List<Tag> tags) {
 		this.tags = tags;
 	}
+	
+	public void addTag(Tag tag) {
+		this.tags.add(tag);
+	}
 
 	@Override
 	public boolean equals(Object o) {

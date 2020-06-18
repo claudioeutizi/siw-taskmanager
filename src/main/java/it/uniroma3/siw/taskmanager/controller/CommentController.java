@@ -35,7 +35,7 @@ public class CommentController {
 	private CommentValidator commentValidator;
 
 	@RequestMapping(value = "{projectId}/tasks/{taskId}/comments/add", method = RequestMethod.POST)
-	public String postComment(@Valid @ModelAttribute("newComment") Comment comment, BindingResult commentBindingResult,
+	public String postComment(@Valid @ModelAttribute("commentForm") Comment comment, BindingResult commentBindingResult,
 			@PathVariable("taskId") Long taskId, @PathVariable("projectId") Long projectId,
 			RedirectAttributes redirect, Model model) {
 
